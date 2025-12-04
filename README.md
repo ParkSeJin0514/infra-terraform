@@ -1,6 +1,6 @@
-# Petclinic-KR Terraform 프로젝트
+# Terraform Infra 자동화 구축
 
-AWS EKS 클러스터를 Terraform으로 프로비저닝하는 Infrastructure as Code(IaC) 프로젝트입니다.
+Infra를 Terraform으로 프로비저닝하는 Infrastructure as Code(IaC) 프로젝트입니다
 
 ## ✨ 주요 특징
 
