@@ -1,8 +1,8 @@
-# Network 모듈
+# Network Module
 
 VPC와 관련된 모든 네트워크 리소스를 생성합니다.
 
-## 생성되는 리소스
+## 📋 생성되는 리소스
 
 | 리소스 | 수량 | 설명 |
 |--------|------|------|
@@ -13,7 +13,9 @@ VPC와 관련된 모든 네트워크 리소스를 생성합니다.
 | Elastic IP | 2 | NAT Gateway용 |
 | Route Table | 3 | Public 1개 + Private 2개 (AZ별) |
 
-## 서브넷 구성
+---
+
+## 🌐 서브넷 구성
 
 | 종류 | AZ-a | AZ-c | 용도 |
 |------|------|------|------|
@@ -22,7 +24,9 @@ VPC와 관련된 모든 네트워크 리소스를 생성합니다.
 | Private EKS | 10.0.100.0/24 | 10.0.110.0/24 | EKS Worker Nodes |
 | Private DB | 10.0.150.0/24 | 10.0.160.0/24 | RDS 등 |
 
-## 사용 방법
+---
+
+## 🚀 사용 방법
 
 ```hcl
 module "network" {
@@ -38,7 +42,9 @@ module "network" {
 }
 ```
 
-## 출력값
+---
+
+## 📤 출력값
 
 | 이름 | 설명 |
 |------|------|
@@ -50,7 +56,9 @@ module "network" {
 | `nat_gateway_ids` | NAT Gateway ID Map |
 | `route_table_ids` | Route Table ID Map |
 
-## 라우팅 구조
+---
+
+## 🔀 라우팅 구조
 
 ```
 Public Subnet → Internet Gateway → 인터넷

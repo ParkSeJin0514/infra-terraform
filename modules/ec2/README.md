@@ -1,8 +1,8 @@
-# EC2 모듈
+# EC2 Module
 
 Bastion Host와 Management 인스턴스를 생성합니다.
 
-## 생성되는 리소스
+## 📋 생성되는 리소스
 
 | 리소스 | 수량 | 설명 |
 |--------|------|------|
@@ -10,20 +10,26 @@ Bastion Host와 Management 인스턴스를 생성합니다.
 | EC2 Instance | 2 | Bastion, Mgmt |
 | Elastic IP | 1 | Bastion용 고정 IP |
 
-## 접근 흐름
+---
+
+## 🔐 접근 흐름
 
 ```
 인터넷 → Bastion (Public) → Mgmt (Private) → EKS API
 ```
 
-## Security Group 규칙
+---
+
+## 🛡️ Security Group 규칙
 
 | Source | Destination | Port | 설명 |
 |--------|-------------|------|------|
 | 0.0.0.0/0 | Bastion SG | 22 | SSH 접근 |
 | Bastion SG | Mgmt SG | 22 | Bastion → Mgmt |
 
-## 사용 방법
+---
+
+## 🚀 사용 방법
 
 ```hcl
 module "ec2" {
@@ -49,7 +55,9 @@ module "ec2" {
 }
 ```
 
-## 출력값
+---
+
+## 📤 출력값
 
 | 이름 | 설명 |
 |------|------|
@@ -59,9 +67,11 @@ module "ec2" {
 | `mgmt_private_ip` | Mgmt Private IP |
 | `mgmt_security_group_id` | Mgmt SG ID (EKS 모듈로 전달) |
 
-## Mgmt 인스턴스 자동 설정
+---
 
-userdata.tftpl 스크립트가 부팅 시 자동 실행:
+## ⚙️ Mgmt 인스턴스 자동 설정
+
+`userdata.tftpl` 스크립트가 부팅 시 자동 실행:
 
 1. 네트워크 연결 대기 (NAT Gateway 라우팅 전파)
 2. 기본 패키지 설치 (mysql-client, curl, unzip, jq)
@@ -73,7 +83,9 @@ userdata.tftpl 스크립트가 부팅 시 자동 실행:
 8. kubeconfig 자동 설정
 9. **ECR 로그인 헬퍼 스크립트 생성** (`/usr/local/bin/ecr-login`)
 
-## Docker & ECR 사용
+---
+
+## 🐳 Docker & ECR 사용
 
 Mgmt 인스턴스에서 Docker 및 ECR 사용 가능:
 
@@ -91,7 +103,9 @@ docker tag my-app:latest <account-id>.dkr.ecr.ap-northeast-2.amazonaws.com/my-ap
 docker push <account-id>.dkr.ecr.ap-northeast-2.amazonaws.com/my-app:latest
 ```
 
-## 로그 확인
+---
+
+## 📝 로그 확인
 
 ```bash
 sudo cat /var/log/userdata.log

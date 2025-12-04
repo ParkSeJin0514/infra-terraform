@@ -1,8 +1,8 @@
-# EKS 모듈
+# EKS Module
 
 EKS 클러스터와 Managed Node Group을 생성합니다.
 
-## 생성되는 리소스
+## 📋 생성되는 리소스
 
 | 리소스 | 수량 | 설명 |
 |--------|------|------|
@@ -12,14 +12,18 @@ EKS 클러스터와 Managed Node Group을 생성합니다.
 | Security Group | 2 | Cluster SG, Node SG |
 | IAM Role | 2 | Cluster Role, Node Role |
 
-## 주요 기능
+---
+
+## ✨ 주요 기능
 
 - **Ubuntu 24.04 EKS AMI**: SSM Parameter Store에서 자동 조회
 - **IMDSv2 강제**: SSRF 공격 방지
 - **EBS 암호화**: 볼륨 자동 암호화
 - **롤링 업데이트**: max_unavailable_percentage 설정
 
-## Security Group 규칙
+---
+
+## 🛡️ Security Group 규칙
 
 | Source | Destination | Port | 설명 |
 |--------|-------------|------|------|
@@ -28,7 +32,9 @@ EKS 클러스터와 Managed Node Group을 생성합니다.
 | Node SG | Node SG | All | Worker 간 통신 |
 | Mgmt SG | Cluster SG | 443 | Mgmt → API Server |
 
-## 사용 방법
+---
+
+## 🚀 사용 방법
 
 ```hcl
 module "eks" {
@@ -57,7 +63,9 @@ module "eks" {
 }
 ```
 
-## 출력값
+---
+
+## 📤 출력값
 
 | 이름 | 설명 |
 |------|------|
@@ -67,13 +75,17 @@ module "eks" {
 | `node_iam_role_arn` | 노드 IAM Role ARN |
 | `node_security_group_id` | 노드 SG ID |
 
-## IAM 정책
+---
+
+## 🔐 IAM 정책
 
 ### Cluster Role
+
 - AmazonEKSClusterPolicy
 - AmazonEKSVPCResourceController
 
 ### Node Role
+
 - AmazonEKSWorkerNodePolicy
 - AmazonEKS_CNI_Policy
 - AmazonEC2ContainerRegistryReadOnly

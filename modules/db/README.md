@@ -2,7 +2,7 @@
 
 AWS RDS MySQL 인스턴스를 생성하는 Terraform 모듈입니다.
 
-## 개요
+## 📋 개요
 
 이 모듈은 다음 리소스를 생성합니다:
 
@@ -11,7 +11,9 @@ AWS RDS MySQL 인스턴스를 생성하는 Terraform 모듈입니다.
 - **Security Group**: RDS 접근 제어
 - **RDS Instance**: MySQL 데이터베이스 인스턴스
 
-## 아키텍처
+---
+
+## 🏗️ 아키텍처
 
 ```
                     ┌──────────────────────────────────────┐
@@ -46,7 +48,9 @@ AWS RDS MySQL 인스턴스를 생성하는 Terraform 모듈입니다.
   └───────────────────────────────────────────────────────────────────────────┘
 ```
 
-## 사용법
+---
+
+## 🚀 사용법
 
 ### 기본 사용
 
@@ -123,8 +127,8 @@ module "db" {
   auto_minor_version_upgrade = true
 
   # 삭제 보호 (프로덕션에서 true 권장)
-  deletion_protection   = true
-  skip_final_snapshot   = false
+  deletion_protection       = true
+  skip_final_snapshot       = false
   final_snapshot_identifier = "${var.project_name}-mysql-final-snapshot"
 
   tags = {
@@ -134,7 +138,9 @@ module "db" {
 }
 ```
 
-## 입력 변수
+---
+
+## 📥 입력 변수
 
 ### 필수 변수
 
@@ -158,9 +164,11 @@ module "db" {
 | `multi_az` | bool | false | Multi-AZ 배포 |
 | `backup_retention_period` | number | 7 | 백업 보관 기간 (일) |
 
-전체 변수 목록은 `variables.tf`를 참조하세요.
+> 💡 전체 변수 목록은 `variables.tf`를 참조하세요.
 
-## 출력 값
+---
+
+## 📤 출력 값
 
 | 출력명 | 설명 | 사용 예 |
 |--------|------|---------|
@@ -170,7 +178,9 @@ module "db" {
 | `connection_string` | JDBC 연결 문자열 | Spring Boot 설정 |
 | `security_group_id` | RDS Security Group ID | 추가 규칙 설정 |
 
-## Spring Boot 연동
+---
+
+## 🔌 Spring Boot 연동
 
 ### Kubernetes Secret 생성
 
@@ -197,14 +207,18 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 ```
 
-## 보안 고려사항
+---
+
+## 🔐 보안 고려사항
 
 1. **Private Subnet 배치**: RDS는 항상 Private Subnet에 배치됩니다.
 2. **Security Group**: 명시적으로 허용된 소스만 접근 가능합니다.
 3. **암호화**: 스토리지 암호화가 기본 활성화되어 있습니다.
 4. **비밀번호 관리**: 비밀번호는 tfvars나 환경변수로 전달하고, 코드에 하드코딩하지 마세요.
 
-## 비용 최적화
+---
+
+## 💰 비용 최적화
 
 ### 개발 환경
 
@@ -217,8 +231,15 @@ allocated_storage = 20
 ### 프로덕션 환경
 
 ```hcl
-instance_class    = "db.t3.small" 이상
-multi_az          = true
-allocated_storage = 50+
+instance_class      = "db.t3.small" 이상
+multi_az            = true
+allocated_storage   = 50+
 deletion_protection = true
 ```
+
+---
+
+## 📚 참고 자료
+
+- [Amazon RDS 공식 문서](https://docs.aws.amazon.com/rds/)
+- [Terraform AWS RDS Module](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance)
