@@ -100,6 +100,13 @@ rm -f kubectl
 echo "kubectl 버전: $(kubectl version --client)"
 
 # ------------------------------------------------
+# Helm 설치
+# ------------------------------------------------
+echo "Helm 설치 중..."
+curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+echo "Helm 버전: $(helm version --short)"
+
+# ------------------------------------------------
 # EKS 클러스터 생성 완료 대기
 # ------------------------------------------------
 echo "EKS 클러스터 생성 대기 중..."
