@@ -1,0 +1,134 @@
+#!/bin/bash
+# ============================================================================
+# Jenkins EC2 초기화 스크립트 (Ubuntu)
+# ============================================================================
+# 이 스크립트는 EC2 부팅 시 자동 실행됩니다.
+#
+# 설치 항목:
+#   1. 기본 패키지 (git, wget, jq 등)
+#   2. Docker
+#   3. AWS CLI v2
+#   4. kubectl
+#   5. Jenkins
+# ============================================================================
+
+set -e  # 에러 발생 시 중단
+
+# 로그 파일 설정
+exec > >(tee /var/log/user-data.log) 2>&1
+echo "===== User Data Script Started: $(date) ====="
+
+# ============================================================================
+# 1. 시스템 업데이트 및 기본 패키지 설치
+# ============================================================================
+echo "===== Installing Base Packages ====="
+
+apt-get update -y
+apt-get install -y git wget curl jq unzip tar apt-transport-https ca-certificates gnupg lsb-release
+
+# ============================================================================
+# 2. Docker 설치
+# ============================================================================
+echo "===== Installing Docker ====="
+
+# Docker GPG 키 추가
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+# Docker 저장소 추가
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Docker 설치
+apt-get update -y
+apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+systemctl start docker
+systemctl enable docker
+
+# ubuntu 사용자를 docker 그룹에 추가
+usermod -aG docker ubuntu
+
+# ============================================================================
+# 3. AWS CLI v2 설치
+# ============================================================================
+echo "===== Installing AWS CLI v2 ====="
+
+cd /tmp
+curl -s "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip -q awscliv2.zip
+./aws/install
+rm -rf aws awscliv2.zip
+
+# 버전 확인
+aws --version
+
+# ============================================================================
+# 4. kubectl 설치
+# ============================================================================
+echo "===== Installing kubectl ====="
+
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+rm kubectl
+
+# 버전 확인
+kubectl version --client
+
+# ============================================================================
+# 5. Jenkins 설치
+# ============================================================================
+echo "===== Installing Jenkins ====="
+
+# Java 17 설치
+apt-get install -y fontconfig openjdk-17-jre
+
+# Jenkins 저장소 추가
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+
+echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/" | tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+# Jenkins 설치
+apt-get update -y
+apt-get install -y jenkins
+
+# Jenkins 서비스 시작
+systemctl daemon-reload
+systemctl start jenkins
+systemctl enable jenkins
+
+# jenkins 사용자를 docker 그룹에 추가
+usermod -aG docker jenkins
+
+# Docker 권한 적용을 위해 Jenkins 재시작
+systemctl restart jenkins
+
+# ============================================================================
+# 6. 추가 도구 설치 (선택사항)
+# ============================================================================
+echo "===== Installing Additional Tools ====="
+
+# Git 최신 버전 확인
+git --version
+
+# ============================================================================
+# 7. Jenkins 초기 비밀번호 로깅
+# ============================================================================
+echo "===== Waiting for Jenkins to start ====="
+
+# Jenkins 시작 대기 (최대 2분)
+for i in {1..24}; do
+    if [ -f /var/lib/jenkins/secrets/initialAdminPassword ]; then
+        echo "===== Jenkins Initial Admin Password ====="
+        cat /var/lib/jenkins/secrets/initialAdminPassword
+        echo "==========================================="
+        break
+    fi
+    echo "Waiting for Jenkins... ($i/24)"
+    sleep 5
+done
+
+# ============================================================================
+# 완료
+# ============================================================================
+echo "===== User Data Script Completed: $(date) ====="
+echo "Jenkins URL: http://<ALB_DNS>:80"
+echo "SSH Access: ssh -i <key.pem> ubuntu@<private-ip>"

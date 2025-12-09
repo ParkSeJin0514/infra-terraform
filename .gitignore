@@ -1,0 +1,39 @@
+# Terraform directories
+.terraform/
+
+# Terraform state files
+*.tfstate
+*.tfstate.backup
+
+# Sensitive variable files
+terraform.tfvars
+
+# SSH keys
+keys/*
+*.pem
+*.key
+
+# Terraform crash logs
+crash.log
+
+# Override files
+.override.tf
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Kubernetes / kubeconfig (생성될 가능성 있음)
+kubeconfig
+kubeconfig.yaml
+
+# OS / Editor
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+
+.terraform.tfstate.lock.info
