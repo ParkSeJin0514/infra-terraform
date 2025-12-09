@@ -1,11 +1,13 @@
-# Jenkins 모듈
+# 🔧 Jenkins 모듈
 
-## 개요
+## 📋 개요
 
 이 모듈은 CI/CD 파이프라인용 Jenkins 서버를 Private Subnet에 배포하고,
 ALB를 통해 외부 접근(GitHub Webhook, Web UI)을 제공합니다.
 
-## 아키텍처
+---
+
+## 🏗️ 아키텍처
 
 ```
                     ┌─────────────────────────────────────────┐
@@ -23,17 +25,21 @@ ALB를 통해 외부 접근(GitHub Webhook, Web UI)을 제공합니다.
                     └─────────────────────────────────────────┘
 ```
 
-## 생성 리소스
+---
+
+## 📦 생성 리소스
 
 | 리소스 | 이름 | 설명 |
 |--------|------|------|
-| Security Group | `{project}-jenkins-alb-sg` | ALB용 (80, 443 허용) |
-| Security Group | `{project}-jenkins-sg` | Jenkins EC2용 |
-| ALB | `{project}-jenkins-alb` | Application Load Balancer |
-| Target Group | `{project}-jenkins-tg` | Jenkins 8080 포트 |
-| EC2 Instance | `{project}-jenkins` | Jenkins 서버 |
+| 🔒 Security Group | `{project}-jenkins-alb-sg` | ALB용 (80, 443 허용) |
+| 🔒 Security Group | `{project}-jenkins-sg` | Jenkins EC2용 |
+| ⚖️ ALB | `{project}-jenkins-alb` | Application Load Balancer |
+| 🎯 Target Group | `{project}-jenkins-tg` | Jenkins 8080 포트 |
+| 🖥️ EC2 Instance | `{project}-jenkins` | Jenkins 서버 |
 
-## 사용법
+---
+
+## 🚀 사용법
 
 ```hcl
 module "jenkins" {
@@ -71,24 +77,28 @@ module "jenkins" {
 }
 ```
 
-## 입력 변수
+---
+
+## 📥 입력 변수
 
 | 변수명 | 타입 | 필수 | 기본값 | 설명 |
 |--------|------|------|--------|------|
-| `project_name` | string | ✓ | - | 프로젝트 이름 |
-| `vpc_id` | string | ✓ | - | VPC ID |
-| `region` | string | ✓ | - | AWS 리전 |
-| `ami` | string | ✓ | - | EC2 AMI ID |
+| `project_name` | string | ✅ | - | 프로젝트 이름 |
+| `vpc_id` | string | ✅ | - | VPC ID |
+| `region` | string | ✅ | - | AWS 리전 |
+| `ami` | string | ✅ | - | EC2 AMI ID |
 | `instance_type` | string | | `t3.medium` | 인스턴스 타입 |
-| `key_name` | string | ✓ | - | SSH 키페어 |
-| `private_subnet_id` | string | ✓ | - | Jenkins EC2 서브넷 |
-| `public_subnet_ids` | list | ✓ | - | ALB 서브넷 (2개 이상) |
-| `bastion_security_group_id` | string | ✓ | - | Bastion SG ID |
+| `key_name` | string | ✅ | - | SSH 키페어 |
+| `private_subnet_id` | string | ✅ | - | Jenkins EC2 서브넷 |
+| `public_subnet_ids` | list | ✅ | - | ALB 서브넷 (2개 이상) |
+| `bastion_security_group_id` | string | ✅ | - | Bastion SG ID |
 | `alb_certificate_arn` | string | | `""` | HTTPS 인증서 ARN |
 | `iam_instance_profile` | string | | `null` | IAM 프로파일 |
 | `root_volume_size` | number | | `30` | EBS 볼륨 크기 (GB) |
 
-## 출력 값
+---
+
+## 📤 출력 값
 
 | 출력명 | 설명 |
 |--------|------|
@@ -99,9 +109,11 @@ module "jenkins" {
 | `jenkins_url` | Jenkins 접속 URL |
 | `github_webhook_url` | GitHub Webhook URL |
 
-## Jenkins 초기 설정
+---
 
-### 1. 초기 관리자 비밀번호 확인
+## ⚙️ Jenkins 초기 설정
+
+### 1️⃣ 초기 관리자 비밀번호 확인
 
 ```bash
 # Bastion 경유 접속
@@ -112,42 +124,60 @@ ssh -i key.pem ec2-user@<jenkins-private-ip>
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 ```
 
-### 2. Jenkins 접속
+### 2️⃣ Jenkins 접속
 
 ```
 http://<ALB_DNS_NAME>
 ```
 
-### 3. 필수 플러그인 설치
+### 3️⃣ 필수 플러그인 설치
 
-- Git Plugin
-- GitHub Plugin
-- Pipeline Plugin
-- Docker Pipeline Plugin
-- Amazon ECR Plugin
-- Kubernetes CLI Plugin
+- 🔌 Git Plugin
+- 🐙 GitHub Plugin
+- 🔄 Pipeline Plugin
+- 🐳 Docker Pipeline Plugin
+- 📦 Amazon ECR Plugin
+- ☸️ Kubernetes CLI Plugin
 
-## GitHub Webhook 설정
+---
+
+## 🔗 GitHub Webhook 설정
 
 1. GitHub Repository → Settings → Webhooks
 2. Add webhook:
-   - Payload URL: `http://<ALB_DNS>/github-webhook/`
-   - Content type: `application/json`
-   - Events: `Just the push event`
+   - **Payload URL**: `http://<ALB_DNS>/github-webhook/`
+   - **Content type**: `application/json`
+   - **Events**: `Just the push event`
 
-## 보안 고려사항
+---
 
-- Jenkins EC2는 Private Subnet에 배치 (외부 직접 접근 불가)
-- ALB를 통해서만 8080 포트 접근 가능
-- SSH 접근은 Bastion을 통해서만 가능
-- 운영 환경에서는 `allowed_cidr_blocks`로 IP 제한 권장
-- HTTPS 사용 권장 (`alb_certificate_arn` 설정)
+## 🔐 보안 고려사항
 
-## 설치되는 도구
+| 항목 | 설명 |
+|------|------|
+| 🏠 Private Subnet | Jenkins EC2는 Private Subnet에 배치 (외부 직접 접근 불가) |
+| ⚖️ ALB 경유 | ALB를 통해서만 8080 포트 접근 가능 |
+| 🔑 SSH 접근 | Bastion을 통해서만 SSH 접근 가능 |
+| 🌐 IP 제한 | 운영 환경에서는 `allowed_cidr_blocks`로 IP 제한 권장 |
+| 🔒 HTTPS | HTTPS 사용 권장 (`alb_certificate_arn` 설정) |
 
-- Jenkins (LTS)
-- Java 17 (Amazon Corretto)
-- Docker
-- AWS CLI v2
-- kubectl
-- Git
+---
+
+## 🛠️ 설치되는 도구
+
+| 도구 | 버전 | 용도 |
+|------|------|------|
+| ☕ Java | 17 (Amazon Corretto) | Jenkins 실행 |
+| 🔧 Jenkins | LTS | CI/CD 서버 |
+| 🐳 Docker | Latest | 컨테이너 빌드 |
+| ☁️ AWS CLI | v2 | AWS 리소스 접근 |
+| ☸️ kubectl | Latest | Kubernetes 관리 |
+| 📂 Git | Latest | 소스 코드 관리 |
+
+---
+
+## 📝 참고 사항
+
+> 💡 **Tip**: Jenkins 초기 설정 후 반드시 관리자 계정을 생성하고 초기 비밀번호를 변경하세요.
+
+> ⚠️ **Warning**: 운영 환경에서는 반드시 HTTPS를 활성화하세요.
